@@ -1,0 +1,55 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using crudoperation.Entity;
+using crudoperation.Repository;
+
+namespace crudoperation
+{
+    public partial class gridview : System.Web.UI.Page
+    {
+        static balcrud obj = new balcrud();
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            if (!IsPostBack)
+            {
+                fillfrid();
+            }
+        }
+        private void fillfrid()
+        {
+            try
+            {
+                List<crudclass> lstcrud = obj.selectall();
+
+                GridView1.DataSource = lstcrud;
+                GridView1.DataBind();
+            }
+            catch(Exception ex)
+            {
+                
+            }
+        }
+
+        protected void GridView1_RowCommand(object sender, GridViewCommandEventArgs e)
+        {
+            
+            
+                if (e.CommandName == "EditButton")
+                {
+                    int index = Convert.ToInt32(e.CommandArgument);
+                    GridViewRow row = GridView1.Rows[index];
+                    Response.Redirect("~/CRUDOP.aspx?EmpNo=" + row.Cells[0].Text);
+                    
+                }
+
+
+            
+
+           
+        }
+    }
+}
