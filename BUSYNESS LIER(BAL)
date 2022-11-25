@@ -1,0 +1,67 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using crudoperation.Entity;
+namespace crudoperation.Repository
+{
+    public class balcrud
+    {
+        public int crudinsert(crudclass crud)
+        {
+            try
+            {
+                dalcrud obj = new dalcrud();
+                return obj.insert(crud);
+            }
+            catch (Exception ex)
+            {
+                return 0;
+            }
+
+        }
+        public int crudupdate(crudclass crud)
+        {
+            try
+            {
+                dalcrud obj = new dalcrud();
+                return obj.update(crud);
+            }
+            catch (Exception ex)
+            {
+                return 0;
+            }
+
+        }
+        public List<crudclass> selectall()
+        {
+            List<crudclass> lstcrud = new List<crudclass>();
+            try
+            {
+                dalcrud obj = new dalcrud();
+                lstcrud = obj.fetchall();
+                return lstcrud;
+            }
+            catch (Exception ex)
+            {
+                return lstcrud;
+            }
+
+        }
+        public crudclass crudselectone(int cid)
+        {
+            crudclass crud = new crudclass();
+            try
+            {
+                dalcrud obj = new dalcrud();
+                crud = obj.fetchone(cid);
+                return crud;
+            }
+            catch (Exception ex)
+            {
+                return crud;
+            }
+
+        }
+    }
+}
