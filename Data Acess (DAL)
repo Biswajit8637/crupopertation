@@ -1,0 +1,163 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Data.SqlClient;
+using System.Data;
+using System.Configuration;
+using crudoperation.Entity;
+
+namespace crudoperation.Repository
+{
+    public class dalcrud
+    {
+
+        public SqlConnection cn;
+        public SqlDataAdapter da;
+        public SqlCommand cmd;
+        public DataTable dt;
+        public dalcrud()
+        {
+            cn = new SqlConnection(ConfigurationManager.ConnectionStrings["myconn"].ConnectionString);
+
+        }
+        public int insert(crudclass crud)
+        {
+            try
+            {
+                cn.Open();
+                cmd = new SqlCommand();
+                cmd.Connection = cn;
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandText = "crurdd_op";
+                cmd.Parameters.AddWithValue("@fname", crud.fname);
+                cmd.Parameters.AddWithValue("@lname", crud.lname);
+                cmd.Parameters.AddWithValue("@rollno", crud.rollno);
+                cmd.Parameters.AddWithValue("@dob", DateTime.Parse(crud.dob));
+                cmd.Parameters.AddWithValue("@gender", crud.gender);
+                cmd.Parameters.AddWithValue("@soicialcate", crud.socialcate);
+                cmd.Parameters.AddWithValue("@reservcate", crud.reservcate);
+                cmd.Parameters.AddWithValue("@disabily", crud.disabily);
+                cmd.Parameters.AddWithValue("@disabiltyprcnt", crud.disabiltyprcnt);
+                cmd.Parameters.AddWithValue("@lanodia", crud.lodia);
+                cmd.Parameters.AddWithValue("@action", "insert");
+                int x = cmd.ExecuteNonQuery();
+                return x;
+                cn.Close();
+
+            }
+            catch (Exception ex)
+            {
+                return 0;
+            }
+
+        }
+        public int update(crudclass crud)
+        {
+            try
+            {
+
+                cn.Open();
+
+                cmd = new SqlCommand("crurdd_op",cn);
+                //cmd.Connection = cn;
+                cmd.CommandType = CommandType.StoredProcedure;
+                //cmd.CommandText = "crurdd_op";
+                cmd.Parameters.AddWithValue("@id", crud.id);
+                cmd.Parameters.AddWithValue("@fname", crud.fname);
+                cmd.Parameters.AddWithValue("@lname", crud.lname);
+                cmd.Parameters.AddWithValue("@rollno", crud.rollno);
+                cmd.Parameters.AddWithValue("@dob", Convert.ToDateTime(crud.dob));
+                cmd.Parameters.AddWithValue("@gender", crud.gender);
+                cmd.Parameters.AddWithValue("@soicialcate", crud.socialcate);
+                cmd.Parameters.AddWithValue("@reservcate", crud.reservcate);
+                cmd.Parameters.AddWithValue("@disabily", crud.disabily);
+                cmd.Parameters.AddWithValue("@disabiltyprcnt", crud.disabiltyprcnt);
+                cmd.Parameters.AddWithValue("@lanodia", crud.lodia);
+                cmd.Parameters.AddWithValue("@action", "update");
+                int x = cmd.ExecuteNonQuery();
+                return x;
+                cn.Close();
+            }
+            catch
+            {
+                return 0;
+            }
+        }
+        public crudclass fetchone(int cid)
+        {
+            crudclass crud = new crudclass();
+            try
+            {
+                cn.Open();
+                cmd = new SqlCommand();
+                cmd.Connection = cn;
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandText = "crurdd_op";
+                cmd.Parameters.AddWithValue("@id", cid);
+                cmd.Parameters.AddWithValue("@action", "selectone");
+                da = new SqlDataAdapter(cmd);
+                dt = new DataTable();
+                da.Fill(dt);
+                crud.id = dt.Rows[0][0].ToString();
+                crud.fname = dt.Rows[0][1].ToString();
+                crud.lname = dt.Rows[0][2].ToString();
+                crud.rollno = dt.Rows[0][3].ToString();
+                crud.dob = dt.Rows[0][4].ToString();
+                crud.gender = dt.Rows[0][5].ToString();
+                crud.socialcate = dt.Rows[0][6].ToString();
+                crud.reservcate = dt.Rows[0][7].ToString();
+                crud.disabily = dt.Rows[0][8].ToString();
+                crud.disabiltyprcnt =Convert.ToDouble( dt.Rows[0][9].ToString());
+                crud.lodia = dt.Rows[0][10].ToString();
+
+                return crud;
+
+            }
+            catch (Exception ex)
+            {
+                return crud;
+            }
+
+        }
+        public List<crudclass> fetchall()
+        {
+            List<crudclass> lstcrud = new List<crudclass>();
+            try
+            {
+                cn.Open();
+                cmd = new SqlCommand();
+                cmd.Connection = cn;
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandText = "crurdd_op";
+                cmd.Parameters.AddWithValue("@action", "selectall");
+                da = new SqlDataAdapter(cmd);
+                dt = new DataTable();
+                da.Fill(dt);
+                for (int x = 0; x < dt.Rows.Count; x++)
+                {
+                    crudclass crud = new crudclass();
+                    crud.id = dt.Rows[x][0].ToString();
+                    crud.fname = dt.Rows[x][1].ToString();
+                    crud.lname = dt.Rows[x][2].ToString();
+                    crud.rollno = dt.Rows[x][3].ToString();
+                    crud.dob = dt.Rows[x][4].ToString();
+                    crud.gender = dt.Rows[x][5].ToString();
+                    crud.socialcate = dt.Rows[x][6].ToString();
+                    crud.reservcate = dt.Rows[x][7].ToString();
+                    crud.disabily = dt.Rows[x][8].ToString();
+                    crud.disabiltyprcnt =Convert.ToDouble( dt.Rows[x][9].ToString());
+                    crud.lodia = dt.Rows[x][10].ToString();
+                    lstcrud.Add(crud);
+                }
+                return lstcrud;
+
+            }
+            catch (Exception ex)
+            {
+                return lstcrud;
+            }
+
+        }
+    }
+}
