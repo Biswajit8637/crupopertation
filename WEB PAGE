@@ -1,0 +1,208 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using crudoperation.Entity;
+using crudoperation.Repository;
+namespace crudoperation
+{
+    public partial class CRUDOP : System.Web.UI.Page
+    {
+        static balcrud obj = new balcrud();
+        int u1;
+        //int id = 0;
+        protected void Page_Load(object sender, EventArgs e)
+        {
+
+            if (!IsPostBack)
+            {
+                hide();
+                
+                if (Request.QueryString["EmpNo"] != null)
+                {
+                    filldata(Convert.ToInt32(Request.QueryString["EmpNo"]));
+                }
+
+            }
+        }
+        private void hide()
+        {
+            btnsubmit.Enabled = true;
+
+
+            drpdisbletype.Visible = false;
+            TextBox1.Visible = false;
+            Label2.Visible = false;
+            Label3.Visible = false;
+            txtfrstname.Focus();
+
+        }
+        private void Reset()
+        {
+            txtfrstname.Text = "";
+            txtlastname.Text = "";
+            txtrollnm.Text = "";
+            txtdob.Text = "";
+            drpgender.SelectedValue = "0";
+            drpsocicategry.SelectedValue = "0";
+            drpreservcategry.SelectedValue = "0";
+            drpdisbletype.SelectedItem.Text = "";
+            TextBox1.Text = "";
+            rdoodia.SelectedValue = "0";
+        }
+
+        private void filldata(int id)
+        {
+
+            id = Convert.ToInt32(Request.QueryString["EmpNo"].ToString());
+            crudclass crud = new crudclass();
+            crud = obj.crudselectone(id);
+            txtfrstname.Text = crud.fname;
+            txtlastname.Text = crud.lname;
+            txtrollnm.Text = crud.rollno;
+            txtdob.Text = crud.dob;
+            drpgender.SelectedValue = crud.gender;
+            drpsocicategry.SelectedValue = crud.socialcate;
+            drpreservcategry.SelectedValue = crud.reservcate;
+            if (drpreservcategry.SelectedValue == "1")
+            {
+                drpdisbletype.Visible = true;
+                drpdisbletype.SelectedValue = crud.reservcate;
+                TextBox1.Text = Convert.ToString(crud.disabiltyprcnt);
+                TextBox1.Visible = true;
+                Label2.Visible = true;
+                Label3.Visible = true;
+
+            }
+            else
+            {
+                drpdisbletype.SelectedValue = "0";
+                TextBox1.Text = "";
+                drpdisbletype.Visible = false;
+                TextBox1.Visible = false;
+                Label2.Visible = false;
+                Label3.Visible = false;
+            }
+            
+
+           
+            rdoodia.SelectedValue = crud.lodia;
+            txtdob.TextMode = TextBoxMode.SingleLine;
+            btnsubmit.Text = "update";
+        }
+
+        protected void btnsubmit_Click(object sender, EventArgs e)
+        {
+            if (btnsubmit.Text == "Submit")
+            {
+                crudclass crud = new crudclass();
+                crud.fname = txtfrstname.Text;
+                crud.lname = txtlastname.Text;
+                crud.rollno = txtrollnm.Text;
+                crud.dob = txtdob.Text;
+                crud.gender = drpgender.SelectedValue.ToString();
+                crud.socialcate = drpsocicategry.SelectedValue.ToString();
+                crud.reservcate = drpreservcategry.SelectedValue.ToString();
+                if (drpreservcategry.SelectedValue == "1") 
+                {
+                    crud.disabily = drpdisbletype.SelectedValue.ToString();
+                    crud.disabiltyprcnt = Convert.ToDouble(TextBox1.Text);
+                   
+                }
+                else
+                {
+                    crud.disabily = "0";
+                    crud.disabiltyprcnt =0.00;
+                    
+                }
+                
+                crud.lodia = rdoodia.SelectedValue.ToString();
+                u1 = obj.crudinsert(crud);
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "MyScript", "alert('inserted Successfully !');window.location.href='gridview.aspx?id=" + u1 + "';", true);
+
+                //ScriptManager.RegisterStartupScript(this, this.GetType(),"alert", "alert('Data Saved sucessfully');window.location ='gridview.aspx?id="+u1, true);
+
+                //Response.Redirect("gridview.aspx?id=" + u1);
+            }
+            else if (btnsubmit.Text == "update")
+            {
+                crudclass crud = new crudclass();
+                crud.id = Convert.ToInt32(Request.QueryString["EmpNo"]).ToString();
+                crud.fname = txtfrstname.Text;
+                crud.lname = txtlastname.Text;
+                crud.rollno = txtrollnm.Text;
+                crud.dob = txtdob.Text;
+                crud.gender = drpgender.SelectedValue.ToString();
+                crud.socialcate = drpsocicategry.SelectedValue.ToString();
+                crud.reservcate = drpreservcategry.SelectedValue.ToString();
+                if (drpreservcategry.SelectedValue == "1")
+                {
+                    crud.disabily = drpdisbletype.SelectedValue.ToString();
+                    crud.disabiltyprcnt = Convert.ToDouble(TextBox1.Text);
+
+                }
+                else
+                {
+                    crud.disabily = "0";
+                    crud.disabiltyprcnt = 0.00;
+
+                }
+                
+                crud.lodia = rdoodia.SelectedValue.ToString();
+                u1 = obj.crudupdate(crud);
+
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "MyScript", "alert('Updated  Successfully !');window.location.href='gridview.aspx?id=" + u1 + "';", true);
+                //ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Data Updated sucessfully');window.location ='gridview.aspx?id='" + u1 + "'", true);
+
+                //Response.Redirect("gridview.aspx?id=" + u1);
+
+            }
+
+
+        }
+
+        protected void drpreservcategry_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (drpreservcategry.SelectedValue == "1")
+            {
+                Label2.Visible = true;
+                Label3.Visible = true;
+                drpdisbletype.Visible = true;
+                TextBox1.Visible = true;
+               
+            }
+            else
+            {
+                drpdisbletype.Visible = false;
+                TextBox1.Visible = false;
+                Label2.Visible = false;
+                Label3.Visible = false;
+
+            }
+            drpdisbletype.SelectedValue = "0";
+            TextBox1.Text = string.Empty;
+
+        }
+
+        protected void btncancel_Click(object sender, EventArgs e)
+        {
+            Reset();
+        }
+
+        //protected void CheckBox2_CheckedChanged(object sender, EventArgs e)
+        //{
+        //    if (CheckBox2.Checked)
+        //    {
+        //        TextBox2.Text = TextBox3.Text;
+        //    }
+        //    else
+        //    {
+
+
+
+        //    }
+        //}
+    }
+}
